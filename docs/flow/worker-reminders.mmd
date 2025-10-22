@@ -1,0 +1,14 @@
+flowchart TD
+  A[Message received: appointments.created] --> B{JSON valid?}
+  B -- no --> X[Log + (optional) DLQ] --> Z[Idle]
+  B -- yes --> C[Compute due times: T-24h & T-30m per channel]
+  C --> D[Insert notifications: status=queued (UTC)]
+  D --> E[Sender loop (periodic)]
+  E --> F{Due rows?}
+  F -- no --> Z
+  F -- yes --> G[Claim rows (SELECT..FOR UPDATE SKIP LOCKED) -> status=sending]
+  G --> H[Attempt send (sms/email)]
+  H -- success --> I[status=sent, sent_at=now()]
+  H -- fail --> J[Backoff: +1m, +5m, +15m, +60m; attempts++ -> status=queued]
+  I --> Z
+  J --> Z

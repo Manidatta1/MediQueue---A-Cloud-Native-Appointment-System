@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "appointment_created.v1",
+  "type": "object",
+  "required": ["event", "version", "id", "occurred_at", "appointment"],
+  "properties": {
+    "event": { "const": "appointment_created" },
+    "version": { "type": "integer", "const": 1 },
+    "id": { "type": "string", "format": "uuid" },
+    "occurred_at": { "type": "string", "format": "date-time" },
+    "appointment": {
+      "type": "object",
+      "required": ["id", "doctor_id", "patient_id", "start_ts", "end_ts"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "doctor_id": { "type": "integer" },
+        "patient_id": { "type": "integer" },
+        "start_ts": { "type": "string", "format": "date-time" },
+        "end_ts": { "type": "string", "format": "date-time" },
+        "channel_hint": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["sms", "email"] }
+        }
+      },
+      "additionalProperties": false
+    },
+    "meta": { "type": "object" }
+  },
+  "additionalProperties": false
+}
