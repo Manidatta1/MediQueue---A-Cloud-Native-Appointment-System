@@ -60,6 +60,10 @@ jobs:
         run: |
           kubectl create namespace healthcare --dry-run=client -o yaml | kubectl apply -f -
 
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add apache-airflow https://airflow.apache.org
+          helm repo update
+
           helm upgrade --install postgres bitnami/postgresql \
             --namespace healthcare \
             --set auth.username=healthcare_admin \
