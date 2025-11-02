@@ -98,8 +98,6 @@ jobs:
              --set externalDatabase.user=healthcare_admin \
              --set externalDatabase.password=healthcareadmin123 \
              --set externalDatabase.database=airflow_db \
-             --set dags.initContainer.waitForDB.enabled=true \
-             --set dags.initContainer.waitForDB.waitTimeout=300 \
              --set web.resources.requests.memory=1Gi \
              --set scheduler.resources.requests.memory=1Gi \
              --set fullnameOverride=airflow-service \
