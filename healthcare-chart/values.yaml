@@ -22,7 +22,7 @@ auth:
   port: 8001
 
 consumer:
-  image: "us-central1-docker.pkg.dev/YOUR_PROJECT/healthcare-repo/backend:latest"
+  image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/backend:latest"
   replicas: 1
 
 frontend:
