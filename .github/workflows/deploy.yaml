@@ -10,7 +10,7 @@ env:
   REGION: us-central1
   CLUSTER: healthcare-cluster
   REPO: ${{ secrets.ARTIFACT_REPO }}
-  GAR_HOST: ${{ env.REGION }}-docker.pkg.dev
+  GAR_HOST: GAR_HOST: us-central1-docker.pkg.dev
 
 jobs:
   deploy:
