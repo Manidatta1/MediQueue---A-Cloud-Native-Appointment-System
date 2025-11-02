@@ -1,0 +1,115 @@
+services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+  
+  postgresql:
+    image: postgres:15
+    container_name: postgresql
+    restart: always
+    environment:
+      POSTGRES_USER: healthcare_admin
+      POSTGRES_PASSWORD: healthcareadmin123
+      POSTGRES_DB: healthcare
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build: ./app_service
+    container_name: app_service
+    restart: always 
+    depends_on:
+      - redis
+      - rabbitmq
+      - postgresql
+    ports:
+      - "8000:8000"
+    environment:
+      REDIS_HOST: redis
+      RABBITMQ_HOST: rabbitmq
+      DB_URL: postgresql://healthcare_admin:healthcareadmin123@postgresql:5432/healthcare
+  
+  consumer_service:
+    build: ./app_service
+    container_name: consumer_service
+    depends_on:
+      - postgresql
+      - rabbitmq
+    command: bash -c "echo '⏳ Waiting for RabbitMQ...' && sleep 10 && python consumer.py"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - DATABASE_URL=postgresql+psycopg2://user:password@postgres:5432/healthcare_db
+  
+
+  auth_service:
+    build: ./authentication_service
+    container_name: auth_service
+    restart: always
+    depends_on:
+      - postgresql
+      - rabbitmq
+      - redis
+    ports:
+      - "8001:8001"
+    environment:
+      DB_URL: postgresql://healthcare_admin:healthcareadmin123@postgresql:5432/healthcare
+      REDIS_HOST: redis
+      RABBITMQ_HOST: rabbitmq
+      JWT_SECRET_KEY: xyz
+      JWT_ALGORITHM: HS256
+      SERVICE_NAME: auth_service
+  
+
+  airflow:
+    image: apache/airflow:2.9.0
+    container_name: airflow_service
+    restart: always
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=sqlite:////opt/airflow/airflow.db
+      - AIRFLOW__WEBSERVER__DEFAULT_UI_TIMEZONE=America/Chicago
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+    ports:
+      - "8080:8080"
+    command: >
+      bash -c "airflow db init &&
+        airflow users create -u admin -p admin -f Air -l Flow -r Admin -e admin@example.com &&
+        airflow webserver & airflow scheduler"
+    depends_on:
+      - api
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend_service
+    restart: always
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+
+
+
+volumes:
+  postgres_data:
+
+    

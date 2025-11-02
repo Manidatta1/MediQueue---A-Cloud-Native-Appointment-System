@@ -1,0 +1,34 @@
+namespace: healthcare
+
+global:
+  db:
+    host: postgres-service
+    user: healthcare_admin
+    password: healthcareadmin123
+    name: healthcare
+  redisHost: redis-service
+  rabbitHost: rabbitmq-service
+  jwtSecret: xyz
+  jwtAlgorithm: HS256
+
+backend:
+  image: "us-central1-docker.pkg.dev/YOUR_PROJECT/healthcare-repo/backend:latest"
+  replicas: 2
+  port: 8000
+
+auth:
+  image: "us-central1-docker.pkg.dev/YOUR_PROJECT/healthcare-repo/auth:latest"
+  replicas: 2
+  port: 8001
+
+consumer:
+  image: "us-central1-docker.pkg.dev/YOUR_PROJECT/healthcare-repo/backend:latest"
+  replicas: 1
+
+frontend:
+  image: "us-central1-docker.pkg.dev/YOUR_PROJECT/healthcare-repo/frontend:latest"
+  replicas: 2
+  port: 80
+  ingress:
+    enabled: true
+    hostname: healthcare.example.com

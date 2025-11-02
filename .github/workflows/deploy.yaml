@@ -1,0 +1,98 @@
+name: Build & Deploy to GKE
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: us-central1
+  CLUSTER: healthcare-cluster
+  REPO: ${{ secrets.ARTIFACT_REPO }}
+  GAR_HOST: ${{ env.REGION }}-docker.pkg.dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # ---------- Generate unique image tags ----------
+      - name: Set image tags
+        id: tags
+        run: |
+          SHA=${GITHUB_SHA::7}
+          echo "BACKEND=${{ env.GAR_HOST }}/${{ env.PROJECT_ID }}/${{ env.REPO }}/backend:${SHA}" >> $GITHUB_OUTPUT
+          echo "AUTH=${{ env.GAR_HOST }}/${{ env.PROJECT_ID }}/${{ env.REPO }}/auth:${SHA}" >> $GITHUB_OUTPUT
+          echo "FRONTEND=${{ env.GAR_HOST }}/${{ env.PROJECT_ID }}/${{ env.REPO }}/frontend:${SHA}" >> $GITHUB_OUTPUT
+
+      # ---------- Authenticate with Google Cloud ----------
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      # ---------- Configure Docker for Artifact Registry ----------
+      - name: Configure Docker
+        run: gcloud auth configure-docker ${{ env.GAR_HOST }}
+
+      # ---------- Build & Push Images ----------
+      - name: Build & Push Docker Images
+        run: |
+          docker build -t ${{ steps.tags.outputs.BACKEND }} ./app_service
+          docker build -t ${{ steps.tags.outputs.AUTH }} ./authentication_service
+          docker build -t ${{ steps.tags.outputs.FRONTEND }} ./frontend
+          docker push ${{ steps.tags.outputs.BACKEND }}
+          docker push ${{ steps.tags.outputs.AUTH }}
+          docker push ${{ steps.tags.outputs.FRONTEND }}
+
+      # ---------- Get Cluster Credentials ----------
+      - name: Get GKE Credentials
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: ${{ env.CLUSTER }}
+          location: ${{ env.REGION }}
+
+      # ---------- Install Infra Dependencies via Helm ----------
+      - name: Install PostgreSQL, RabbitMQ, and Airflow
+        run: |
+          kubectl create namespace healthcare --dry-run=client -o yaml | kubectl apply -f -
+
+          helm upgrade --install postgres bitnami/postgresql \
+            --namespace healthcare \
+            --set auth.username=healthcare_admin \
+            --set auth.password=healthcareadmin123 \
+            --set auth.database=healthcare \
+            --set fullnameOverride=postgres-service
+
+          helm upgrade --install rabbitmq bitnami/rabbitmq \
+            --namespace healthcare \
+            --set auth.username=guest \
+            --set auth.password=guest \
+            --set fullnameOverride=rabbitmq-service
+          
+          helm upgrade --install redis bitnami/redis \
+            --namespace healthcare \
+            --set auth.enabled=false \
+            --set architecture=standalone \
+            --set fullnameOverride=redis-service
+
+          helm upgrade --install airflow apache-airflow/airflow \
+            --namespace healthcare \
+            --set executor=SequentialExecutor \
+            --set postgresql.enabled=false \
+            --set externalDatabase.host=postgres-service \
+            --set externalDatabase.user=healthcare_admin \
+            --set externalDatabase.password=healthcareadmin123 \
+            --set externalDatabase.database=airflow_db \
+            --set fullnameOverride=airflow-service
+
+      # ---------- Deploy Application via Helm ----------
+      - name: Deploy App (Backend + Auth + Frontend)
+        run: |
+          helm upgrade --install healthcare ./healthcare-chart \
+            --namespace healthcare \
+            --set backend.image=${{ steps.tags.outputs.BACKEND }} \
+            --set auth.image=${{ steps.tags.outputs.AUTH }} \
+            --set frontend.image=${{ steps.tags.outputs.FRONTEND }}

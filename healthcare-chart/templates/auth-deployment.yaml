@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.auth.replicas }}
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+        - name: auth
+          image: {{ .Values.auth.image }}
+          ports:
+            - containerPort: {{ .Values.auth.port }}
+          env:
+            - name: DB_URL
+              value: "postgresql://{{ .Values.global.db.user }}:{{ .Values.global.db.password }}@{{ .Values.global.db.host }}:5432/{{ .Values.global.db.name }}"
+            - name: REDIS_HOST
+              value: {{ .Values.global.redisHost }}
+            - name: RABBITMQ_HOST
+              value: {{ .Values.global.rabbitHost }}
+            - name: JWT_SECRET_KEY
+              value: {{ .Values.global.jwtSecret }}
+            - name: JWT_ALGORITHM
+              value: {{ .Values.global.jwtAlgorithm }}

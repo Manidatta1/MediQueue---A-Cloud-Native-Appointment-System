@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.backend.replicas }}
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: {{ .Values.backend.image }}
+          ports:
+            - containerPort: {{ .Values.backend.port }}
+          env:
+            - name: DB_URL
+              value: "postgresql://{{ .Values.global.db.user }}:{{ .Values.global.db.password }}@{{ .Values.global.db.host }}:5432/{{ .Values.global.db.name }}"
+            - name: REDIS_HOST
+              value: {{ .Values.global.redisHost }}
+            - name: RABBITMQ_HOST
+              value: {{ .Values.global.rabbitHost }}
+            - name: AUTH_BASE_URL
+              value: "http://auth-service:{{ .Values.auth.port }}"

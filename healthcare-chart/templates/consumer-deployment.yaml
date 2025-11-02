@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.consumer.replicas }}
+  selector:
+    matchLabels:
+      app: consumer
+  template:
+    metadata:
+      labels:
+        app: consumer
+    spec:
+      containers:
+        - name: consumer
+          image: {{ .Values.consumer.image }}
+          command: ["bash", "-c", "python consumer.py"]
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://{{ .Values.global.db.user }}:{{ .Values.global.db.password }}@{{ .Values.global.db.host }}:5432/{{ .Values.global.db.name }}"
+            - name: RABBITMQ_HOST
+              value: {{ .Values.global.rabbitHost }}
+            - name: RABBITMQ_PORT
+              value: "5672"
