@@ -12,12 +12,12 @@ global:
   jwtAlgorithm: HS256
 
 backend:
-  image: "us-central1-docker.pkg.dev/YOUR_PROJECT/healthcare-repo/backend:latest"
+  image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/backend:latest"
   replicas: 2
   port: 8000
 
 auth:
-  image: "us-central1-docker.pkg.dev/YOUR_PROJECT/healthcare-repo/auth:latest"
+  image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/auth:latest"
   replicas: 2
   port: 8001
 
@@ -26,7 +26,7 @@ consumer:
   replicas: 1
 
 frontend:
-  image: "us-central1-docker.pkg.dev/YOUR_PROJECT/healthcare-repo/frontend:latest"
+  image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/frontend:latest"
   replicas: 2
   port: 80
   ingress:
