@@ -85,7 +85,7 @@ jobs:
 
           helm upgrade --install airflow apache-airflow/airflow \
             --namespace healthcare \
-            --set executor=SequentialExecutor \
+            --set executor=LocalExecutor \
             --set postgresql.enabled=false \
             --set externalDatabase.host=postgres-service \
             --set externalDatabase.user=healthcare_admin \
