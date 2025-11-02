@@ -73,6 +73,7 @@ jobs:
 
           helm upgrade --install rabbitmq bitnami/rabbitmq \
             --namespace healthcare \
+            --version 16.0.14 \
             --set auth.username=guest \
             --set auth.password=guest \
             --set fullnameOverride=rabbitmq-service
@@ -92,6 +93,7 @@ jobs:
             --set externalDatabase.password=healthcareadmin123 \
             --set externalDatabase.database=airflow_db \
             --set fullnameOverride=airflow-service
+            --timeout 15m
 
       # ---------- Deploy Application via Helm ----------
       - name: Deploy App (Backend + Auth + Frontend)
