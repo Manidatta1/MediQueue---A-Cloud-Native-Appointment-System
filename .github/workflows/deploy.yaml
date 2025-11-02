@@ -84,24 +84,24 @@ jobs:
             --set architecture=standalone \
             --set fullnameOverride=redis-service
 
-          helm upgrade --install airflow apache-airflow/airflow \
-             --namespace healthcare \
-             --set executor=LocalExecutor \
-             --set postgresql.enabled=false \
-             --set data.metadataConnection.host=postgres-service \
-             --set data.metadataConnection.port=5432 \
-             --set data.metadataConnection.user=healthcare_admin \
-             --set data.metadataConnection.pass=healthcareadmin123 \
-             --set data.metadataConnection.db=airflow_db \
-             --set externalDatabase.host=postgres-service \
-             --set externalDatabase.port=5432 \
-             --set externalDatabase.user=healthcare_admin \
-             --set externalDatabase.password=healthcareadmin123 \
-             --set externalDatabase.database=airflow_db \
-             --set web.resources.requests.memory=1Gi \
-             --set scheduler.resources.requests.memory=1Gi \
-             --set fullnameOverride=airflow-service \
-             --timeout 20m
+          # helm upgrade --install airflow apache-airflow/airflow \
+          #    --namespace healthcare \
+          #    --set executor=LocalExecutor \
+          #    --set postgresql.enabled=false \
+          #    --set data.metadataConnection.host=postgres-service \
+          #    --set data.metadataConnection.port=5432 \
+          #    --set data.metadataConnection.user=healthcare_admin \
+          #    --set data.metadataConnection.pass=healthcareadmin123 \
+          #    --set data.metadataConnection.db=airflow_db \
+          #    --set externalDatabase.host=postgres-service \
+          #    --set externalDatabase.port=5432 \
+          #    --set externalDatabase.user=healthcare_admin \
+          #    --set externalDatabase.password=healthcareadmin123 \
+          #    --set externalDatabase.database=airflow_db \
+          #    --set web.resources.requests.memory=1Gi \
+          #    --set scheduler.resources.requests.memory=1Gi \
+          #    --set fullnameOverride=airflow-service \
+          #    --timeout 20m
 
 
       # ---------- Deploy Application via Helm ----------
