@@ -85,15 +85,26 @@ jobs:
             --set fullnameOverride=redis-service
 
           helm upgrade --install airflow apache-airflow/airflow \
-            --namespace healthcare \
-            --set executor=LocalExecutor \
-            --set postgresql.enabled=false \
-            --set externalDatabase.host=postgres-service \
-            --set externalDatabase.user=healthcare_admin \
-            --set externalDatabase.password=healthcareadmin123 \
-            --set externalDatabase.database=airflow_db \
-            --set fullnameOverride=airflow-service
-            --timeout 15m
+             --namespace healthcare \
+             --set executor=LocalExecutor \
+             --set postgresql.enabled=false \
+             --set data.metadataConnection.host=postgres-service \
+             --set data.metadataConnection.port=5432 \
+             --set data.metadataConnection.user=healthcare_admin \
+             --set data.metadataConnection.pass=healthcareadmin123 \
+             --set data.metadataConnection.db=airflow_db \
+             --set externalDatabase.host=postgres-service \
+             --set externalDatabase.port=5432 \
+             --set externalDatabase.user=healthcare_admin \
+             --set externalDatabase.password=healthcareadmin123 \
+             --set externalDatabase.database=airflow_db \
+             --set dags.initContainer.waitForDB.enabled=true \
+             --set dags.initContainer.waitForDB.waitTimeout=300 \
+             --set web.resources.requests.memory=1Gi \
+             --set scheduler.resources.requests.memory=1Gi \
+             --set fullnameOverride=airflow-service \
+             --timeout 20m
+
 
       # ---------- Deploy Application via Helm ----------
       - name: Deploy App (Backend + Auth + Frontend)
