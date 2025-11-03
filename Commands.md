@@ -115,3 +115,25 @@ gcloud projects add-iam-policy-binding <PROJECT_ID> \
 
 gcloud iam service-accounts keys create key.json \
   --iam-account=github-deployer@<PROJECT_ID>.iam.gserviceaccount.com
+
+
+gcloud projects add-iam-policy-binding 	healthcare-platform-477020 \
+  --member="serviceAccount:github-deployer@healthcare-platform-477020.iam.gserviceaccount.com" \
+  --role="roles/container.admin"
+
+gcloud projects add-iam-policy-binding 	healthcare-platform-477020 \
+  --member="serviceAccount:github-deployer@healthcare-platform-477020.iam.gserviceaccount.com" \
+  --role="roles/artifactregistry.writer"
+
+gcloud projects add-iam-policy-binding 	healthcare-platform-477020 \
+  --member="serviceAccount:github-deployer@healthcare-platform-477020.iam.gserviceaccount.com" \
+  --role="roles/storage.admin"
+
+gcloud projects add-iam-policy-binding 	healthcare-platform-477020 \
+  --member="serviceAccount:github-deployer@healthcare-platform-477020.iam.gserviceaccount.com" \
+  --role="roles/viewer"
+
+gcloud projects get-iam-policy healthcare-platform-477020 \
+  --flatten="bindings[].members" \
+  --filter="bindings.members:github-deployer@healthcare-platform-477020.iam.gserviceaccount.com" \
+  --format="table(bindings.role)"
