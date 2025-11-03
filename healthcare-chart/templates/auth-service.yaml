@@ -9,4 +9,4 @@ spec:
   ports:
     - port: {{ .Values.auth.port }}
       targetPort: {{ .Values.auth.port }}
-  type: ClusterIP
+  type: {{ .Values.auth.service.type }}
