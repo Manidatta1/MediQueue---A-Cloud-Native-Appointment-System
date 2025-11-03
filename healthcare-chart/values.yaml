@@ -1,44 +1,42 @@
-namespace: healthcare
+{{- if .Values.frontend.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frontend-ingress
+  namespace: {{ .Values.namespace }}
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.allow-http: "true"
+    kubernetes.io/ingress.global-static-ip-name: healthcare-ip
+    kubernetes.io/ingress.backend-protocol: "HTTP"
+    cloud.google.com/neg: '{"ingress": true}'
+    cloud.google.com/app-protocols: '{"frontend-service":"HTTP","backend-service":"HTTP","auth-service":"HTTP"}'
+spec:
+  rules:
+    - host: {{ .Values.frontend.ingress.hostname }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 8000
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 8001
+{{- end }}
 
-global:
-  db:
-    host: postgres-service
-    user: healthcare_admin
-    password: healthcareadmin123
-    name: healthcare
-  redisHost: redis-service
-  rabbitHost: rabbitmq-service
-  jwtSecret: xyz
-  jwtAlgorithm: HS256
-
-backend:
-  image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/backend:latest"
-  replicas: 2
-  port: 8000
-  service:
-    type: NodePort
-
-auth:
-  image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/auth:latest"
-  replicas: 2
-  port: 8001
-  service:
-    type: NodePort
-
-consumer:
-  image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/backend:latest"
-  replicas: 1
-
-frontend:
-  image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/frontend:latest"
-  replicas: 2
-  port: 80
-  ingress:
-    enabled: true
-    hostname: healthcare.example.com
-  service:
-    type: NodePort
-    
-airflow:
-  enabled: false
 
