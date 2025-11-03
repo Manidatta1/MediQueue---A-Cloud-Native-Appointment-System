@@ -15,11 +15,15 @@ backend:
   image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/backend:latest"
   replicas: 2
   port: 8000
+  service:
+    type: NodePort
 
 auth:
   image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/auth:latest"
   replicas: 2
   port: 8001
+  service:
+    type: NodePort
 
 consumer:
   image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/backend:latest"
@@ -32,6 +36,8 @@ frontend:
   ingress:
     enabled: true
     hostname: healthcare.example.com
+  service:
+    type: NodePort
     
 airflow:
   enabled: false
