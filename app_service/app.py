@@ -41,7 +41,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Healthcare Appointment Service")
+app = FastAPI(title="Healthcare Appointment Service",root_path="/api")
 
 origins = [
     "http://localhost:5173",  # Vite dev
