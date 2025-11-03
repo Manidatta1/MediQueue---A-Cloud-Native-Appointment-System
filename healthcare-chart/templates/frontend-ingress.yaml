@@ -6,7 +6,6 @@ metadata:
   namespace: {{ .Values.namespace }}
   annotations:
     kubernetes.io/ingress.class: "gce"
-    kubernetes.io/ingress.class: "gce"
     kubernetes.io/ingress.allow-http: "true"
     kubernetes.io/ingress.global-static-ip-name: healthcare-ip
     kubernetes.io/ingress.backend-protocol: "HTTP"
