@@ -1,10 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: consumer
-  namespace: {{ .Values.namespace }}
+  name: consumer-deployment
 spec:
-  replicas: {{ .Values.consumer.replicas }}
+  replicas: 1
   selector:
     matchLabels:
       app: consumer
@@ -14,13 +13,13 @@ spec:
         app: consumer
     spec:
       containers:
-        - name: consumer
-          image: {{ .Values.consumer.image }}
-          command: ["bash", "-c", "python consumer.py"]
-          env:
-            - name: DATABASE_URL
-              value: "postgresql://{{ .Values.global.db.user }}:{{ .Values.global.db.password }}@{{ .Values.global.db.host }}:5432/{{ .Values.global.db.name }}"
-            - name: RABBITMQ_HOST
-              value: {{ .Values.global.rabbitHost }}
-            - name: RABBITMQ_PORT
-              value: "5672"
+      - name: consumer
+        image: {{ .Values.backend.image }}  
+        command: ["python", "consumer.py"]
+        env:
+        - name: RABBITMQ_HOST
+          value: rabbitmq-service
+        - name: RABBITMQ_PORT
+          value: "5672"
+        - name: DATABASE_URL
+          value: postgresql+psycopg2://healthcare_admin:healthcareadmin123@postgres-service:5432/healthcare

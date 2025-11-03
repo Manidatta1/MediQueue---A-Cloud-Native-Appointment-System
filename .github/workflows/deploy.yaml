@@ -3,13 +3,14 @@ name: Build & Deploy to GKE
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  REGION: us-central1
+  REGION: us-central1-a 
   CLUSTER: healthcare-cluster
   REPO: ${{ secrets.ARTIFACT_REPO }}
-  GAR_HOST: ${{ env.REGION }}-docker.pkg.dev
+  GAR_HOST: us-central1-docker.pkg.dev
 
 jobs:
   deploy:
@@ -59,6 +60,10 @@ jobs:
         run: |
           kubectl create namespace healthcare --dry-run=client -o yaml | kubectl apply -f -
 
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add apache-airflow https://airflow.apache.org
+          helm repo update
+
           helm upgrade --install postgres bitnami/postgresql \
             --namespace healthcare \
             --set auth.username=healthcare_admin \
@@ -68,9 +73,13 @@ jobs:
 
           helm upgrade --install rabbitmq bitnami/rabbitmq \
             --namespace healthcare \
+            --version 16.0.14 \
             --set auth.username=guest \
             --set auth.password=guest \
-            --set fullnameOverride=rabbitmq-service
+            --set fullnameOverride=rabbitmq-service \
+            --set image.repository=bitnamilegacy/rabbitmq \
+            --set image.tag=4.0.5-debian-12-r0 \
+            --set global.security.allowInsecureImages=true
           
           helm upgrade --install redis bitnami/redis \
             --namespace healthcare \
@@ -78,21 +87,34 @@ jobs:
             --set architecture=standalone \
             --set fullnameOverride=redis-service
 
-          helm upgrade --install airflow apache-airflow/airflow \
-            --namespace healthcare \
-            --set executor=SequentialExecutor \
-            --set postgresql.enabled=false \
-            --set externalDatabase.host=postgres-service \
-            --set externalDatabase.user=healthcare_admin \
-            --set externalDatabase.password=healthcareadmin123 \
-            --set externalDatabase.database=airflow_db \
-            --set fullnameOverride=airflow-service
+          # helm upgrade --install airflow apache-airflow/airflow \
+          #    --namespace healthcare \
+          #    --set executor=LocalExecutor \
+          #    --set postgresql.enabled=false \
+          #    --set data.metadataConnection.host=postgres-service \
+          #    --set data.metadataConnection.port=5432 \
+          #    --set data.metadataConnection.user=healthcare_admin \
+          #    --set data.metadataConnection.pass=healthcareadmin123 \
+          #    --set data.metadataConnection.db=airflow_db \
+          #    --set externalDatabase.host=postgres-service \
+          #    --set externalDatabase.port=5432 \
+          #    --set externalDatabase.user=healthcare_admin \
+          #    --set externalDatabase.password=healthcareadmin123 \
+          #    --set externalDatabase.database=airflow_db \
+          #    --set web.resources.requests.memory=1Gi \
+          #    --set scheduler.resources.requests.memory=1Gi \
+          #    --set fullnameOverride=airflow-service \
+          #    --timeout 20m
+
 
       # ---------- Deploy Application via Helm ----------
       - name: Deploy App (Backend + Auth + Frontend)
         run: |
           helm upgrade --install healthcare ./healthcare-chart \
             --namespace healthcare \
+            --create-namespace \
             --set backend.image=${{ steps.tags.outputs.BACKEND }} \
             --set auth.image=${{ steps.tags.outputs.AUTH }} \
-            --set frontend.image=${{ steps.tags.outputs.FRONTEND }}
+            --set frontend.image=${{ steps.tags.outputs.FRONTEND }} \
+            --force
+            
