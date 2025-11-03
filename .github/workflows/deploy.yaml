@@ -77,6 +77,7 @@ jobs:
             --set auth.username=guest \
             --set auth.password=guest \
             --set fullnameOverride=rabbitmq-service
+            --set image.tag=4.0.5-debian-12-r0
           
           helm upgrade --install redis bitnami/redis \
             --namespace healthcare \
