@@ -9,4 +9,4 @@ spec:
   ports:
     - port: 80
       targetPort: {{ .Values.frontend.port }}
-  type: ClusterIP
+  type: {{ .Values.frontend.service.type }}
