@@ -21,7 +21,7 @@ ALGORITHM = os.getenv("ALGORITHM", "HS256")
 # Redis connection
 r = redis.Redis(host=os.getenv("REDIS_HOST", "redis"), port=6379, decode_responses=True)
 
-app = FastAPI(title="Healthcare Authentication Service")
+app = FastAPI(title="Healthcare Authentication Service",root_path="/auth")
 
 app.add_middleware(
     CORSMiddleware,
