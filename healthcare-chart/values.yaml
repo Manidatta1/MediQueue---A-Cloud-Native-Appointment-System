@@ -32,7 +32,7 @@ consumer:
 frontend:
   image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/frontend:latest"
   replicas: 2
-  port: 5173
+  port: 80
   service:
     type: NodePort
   ingress:
