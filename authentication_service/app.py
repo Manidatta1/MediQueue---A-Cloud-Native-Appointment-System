@@ -48,6 +48,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+@app.get("/")
+def home():
+    return {"message": "Auth service is running"}
+
 
 def publish_user_created_event(user, profile):
     """Publishes a 'user.created' event to the RabbitMQ exchange."""
