@@ -28,21 +28,22 @@ spec:
             - name: AIRFLOW__WEBSERVER__DEFAULT_UI_TIMEZONE
               value: "America/Chicago"
 
-          # ✅ Command to initialize DB, create user, and start Airflow webserver + scheduler
+          # ✅ Fixed command: initializes DB, creates admin, runs webserver + scheduler
           command:
             - /bin/bash
             - -c
             - |
-              airflow db init &&
-              airflow users create -u admin -p admin -f Air -l Flow -r Admin -e admin@example.com &&
-              airflow webserver & airflow scheduler
+              airflow db init && \
+              airflow users create -u admin -p admin -f Air -l Flow -r Admin -e admin@example.com || true && \
+              airflow webserver -p 8080 & \
+              exec airflow scheduler
 
-          # (Optional: if you plan to mount DAGs later, uncomment below)
+          # (Optional) Uncomment if you want to mount DAGs later from ConfigMap
           # volumeMounts:
           #   - name: dags
           #     mountPath: /opt/airflow/dags
 
-      # (Optional volume for DAGs, only if you have a ConfigMap)
+      # (Optional) ConfigMap for DAGs
       # volumes:
       #   - name: dags
       #     configMap:
