@@ -41,3 +41,9 @@ frontend:
     type: LoadBalancer      # 👈 expose this publicly via GCP load balancer
   ingress:
     enabled: false          # 👈 disable ingress entirely (we’re using LoadBalancer instead)
+
+
+ airflow:
+  image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/airflow:latest"
+  service:
+    type: LoadBalancer
