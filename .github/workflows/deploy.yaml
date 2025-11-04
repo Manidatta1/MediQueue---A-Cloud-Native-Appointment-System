@@ -44,9 +44,11 @@ jobs:
           docker build -t ${{ steps.tags.outputs.BACKEND }} ./app_service
           docker build -t ${{ steps.tags.outputs.AUTH }} ./authentication_service
           docker build -t ${{ steps.tags.outputs.FRONTEND }} ./frontend
+          docker build -t ${{ steps.tags.outputs.AIRFLOW }} ./airflow/dags
           docker push ${{ steps.tags.outputs.BACKEND }}
           docker push ${{ steps.tags.outputs.AUTH }}
           docker push ${{ steps.tags.outputs.FRONTEND }}
+          docker push ${{ steps.tags.outputs.AIRFLOW }}
 
       # ---------- Get Cluster Credentials ----------
       - name: Get GKE Credentials
@@ -120,5 +122,6 @@ jobs:
             --set backend.image=${{ steps.tags.outputs.BACKEND }} \
             --set auth.image=${{ steps.tags.outputs.AUTH }} \
             --set frontend.image=${{ steps.tags.outputs.FRONTEND }} \
+            --set airflow.image=${{ steps.tags.outputs.AIRFLOW }} \
             --force
             
