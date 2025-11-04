@@ -17,7 +17,7 @@ backend:
   replicas: 2
   port: 8000
   service:
-    type: ClusterIP          # 👈 internal only (no external IP)
+    type: ClusterIP
 
 # ---------------- AUTH SERVICE ----------------
 auth:
@@ -25,7 +25,7 @@ auth:
   replicas: 2
   port: 8001
   service:
-    type: ClusterIP          # 👈 internal only (no external IP)
+    type: ClusterIP
 
 # ---------------- CONSUMER WORKER ----------------
 consumer:
@@ -36,16 +36,25 @@ consumer:
 frontend:
   image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/frontend:latest"
   replicas: 2
-  port: 80                  # 👈 Nginx serves on port 80
+  port: 80
   service:
-    type: LoadBalancer      # 👈 expose publicly via GCP load balancer
+    type: LoadBalancer
   ingress:
-    enabled: false          # 👈 disable ingress since using LoadBalancer
+    enabled: false
 
 # ---------------- AIRFLOW ----------------
 airflow:
   image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/airflow:latest"
-  replicas: 1
-  port: 8080
   service:
-    type: LoadBalancer      # 👈 expose Airflow UI externally
+    type: LoadBalancer
+  env:
+    - name: AIRFLOW__CORE__EXECUTOR
+      value: "LocalExecutor"
+    - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+      value: "postgresql+psycopg2://healthcare_admin:healthcareadmin123@postgres-service:5432/airflow_db"
+    - name: AIRFLOW__CORE__FERNET_KEY
+      value: "a_random_generated_key_32_chars"   # e.g. "uJZkHqL2Evs91oU8FdWch3xjXKBoJd7g"
+    - name: AIRFLOW__CORE__LOAD_EXAMPLES
+      value: "False"
+    - name: AIRFLOW__WEBSERVER__DEFAULT_UI_TIMEZONE
+      value: "America/Chicago"
