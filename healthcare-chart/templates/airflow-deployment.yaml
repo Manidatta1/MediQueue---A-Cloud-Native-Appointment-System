@@ -27,10 +27,10 @@ spec:
               value: "sqlite:////opt/airflow/airflow.db"
             - name: AIRFLOW__WEBSERVER__DEFAULT_UI_TIMEZONE
               value: "America/Chicago"
-          volumeMounts:
-            - name: dags
-              mountPath: /opt/airflow/dags
-      volumes:
-        - name: dags
-          configMap:
-            name: airflow-dags
+      #     volumeMounts:
+      #       - name: dags
+      #         mountPath: /opt/airflow/dags
+      # volumes:
+      #   - name: dags
+      #     configMap:
+      #       name: airflow-dags
