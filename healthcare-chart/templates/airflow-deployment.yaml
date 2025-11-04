@@ -27,9 +27,22 @@ spec:
               value: "sqlite:////opt/airflow/airflow.db"
             - name: AIRFLOW__WEBSERVER__DEFAULT_UI_TIMEZONE
               value: "America/Chicago"
-      #     volumeMounts:
-      #       - name: dags
-      #         mountPath: /opt/airflow/dags
+
+          # ✅ Command to initialize DB, create user, and start Airflow webserver + scheduler
+          command:
+            - /bin/bash
+            - -c
+            - |
+              airflow db init &&
+              airflow users create -u admin -p admin -f Air -l Flow -r Admin -e admin@example.com &&
+              airflow webserver & airflow scheduler
+
+          # (Optional: if you plan to mount DAGs later, uncomment below)
+          # volumeMounts:
+          #   - name: dags
+          #     mountPath: /opt/airflow/dags
+
+      # (Optional volume for DAGs, only if you have a ConfigMap)
       # volumes:
       #   - name: dags
       #     configMap:
