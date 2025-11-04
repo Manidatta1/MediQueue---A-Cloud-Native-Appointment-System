@@ -106,7 +106,12 @@ jobs:
           #    --set fullnameOverride=airflow-service \
           #    --timeout 20m
 
-
+      - name: Patch Helm ownership labels on namespace
+        run: |
+          kubectl label namespace healthcare app.kubernetes.io/managed-by=Helm --overwrite
+          kubectl annotate namespace healthcare meta.helm.sh/release-name=healthcare --overwrite
+          kubectl annotate namespace healthcare meta.helm.sh/release-namespace=healthcare --overwrite
+          
       # ---------- Deploy Application via Helm ----------
       - name: Deploy App (Backend + Auth + Frontend)
         run: |
