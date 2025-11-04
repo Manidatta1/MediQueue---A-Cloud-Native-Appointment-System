@@ -6,7 +6,7 @@ global:
     user: healthcare_admin
     password: healthcareadmin123
     name: healthcare
-  redisHost: redis-service
+  redisHost: redis-service-master
   rabbitHost: rabbitmq-service
   jwtSecret: xyz
   jwtAlgorithm: HS256
