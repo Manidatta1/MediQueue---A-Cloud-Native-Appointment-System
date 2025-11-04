@@ -20,7 +20,7 @@ if not logger.handlers:
 
 logger.info("✅ auth_utils.py loaded successfully")
 
-AUTH_VERIFY_URL = os.getenv("AUTH_VERIFY_URL", "http://auth_service:8001/verify-token")
+AUTH_VERIFY_URL = os.getenv("AUTH_VERIFY_URL", "http://auth-service:8001/verify-token")
 
 def get_current_user(authorization: str = Header(None)):
     if not authorization or not authorization.lower().startswith("bearer "):
