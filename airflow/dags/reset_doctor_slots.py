@@ -5,7 +5,7 @@ import requests
 import logging
 
 def reset_slots():
-    url = "http://app_service:8000/doctor/slots/reset"
+    url = "http://app-service:8000/doctor/slots/reset"
     try:
         response = requests.post(url)
         logging.info(f"Reset response: {response.status_code} | {response.text}")
