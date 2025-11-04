@@ -7,7 +7,7 @@ RUN pip install --no-cache-dir psycopg2-binary requests
 COPY dags/ /opt/airflow/dags/
 
 
-# Default command — initialize DB, create user, and start webserver + scheduler
-CMD bash -c "airflow db init && \
-    airflow users create -u admin -p admin -f Air -l Flow -r Admin -e admin@example.com && \
-    airflow webserver & airflow scheduler"
+# # Default command — initialize DB, create user, and start webserver + scheduler
+# CMD bash -c "airflow db init && \
+#     airflow users create -u admin -p admin -f Air -l Flow -r Admin -e admin@example.com && \
+#     airflow webserver & airflow scheduler"
