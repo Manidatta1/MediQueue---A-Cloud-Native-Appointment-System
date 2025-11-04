@@ -4,7 +4,7 @@ import os
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://healthcare_admin:healthcareadmin123@postgres-service:5432/healthcare",
+    "postgresql://healthcare_admin:healthcareadmin123@postgres-service:5432/healthcaredatabase",
 )
 
 engine = create_engine(DATABASE_URL, pool_pre_ping=True)
