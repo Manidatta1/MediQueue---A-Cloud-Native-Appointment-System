@@ -45,7 +45,7 @@ jobs:
           docker build -t ${{ steps.tags.outputs.BACKEND }} ./app_service
           docker build -t ${{ steps.tags.outputs.AUTH }} ./authentication_service
           docker build -t ${{ steps.tags.outputs.FRONTEND }} ./frontend
-          docker build -t ${{ steps.tags.outputs.AIRFLOW }} ./airflow/dags
+          docker build -t ${{ steps.tags.outputs.AIRFLOW }} ./airflow
           docker push ${{ steps.tags.outputs.BACKEND }}
           docker push ${{ steps.tags.outputs.AUTH }}
           docker push ${{ steps.tags.outputs.FRONTEND }}
