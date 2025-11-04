@@ -28,14 +28,18 @@ spec:
             - name: AIRFLOW__WEBSERVER__DEFAULT_UI_TIMEZONE
               value: "America/Chicago"
 
-          # ✅ Fixed command: initializes DB, creates admin, runs webserver + scheduler
+          # ✅ Ensures Airflow stays running and starts all components
           command:
             - /bin/bash
             - -c
             - |
+              echo "Initializing Airflow DB..." && \
               airflow db init && \
+              echo "Creating admin user (ignore if exists)..." && \
               airflow users create -u admin -p admin -f Air -l Flow -r Admin -e admin@example.com || true && \
-              airflow webserver -p 8080 & \
+              echo "Starting Airflow webserver..." && \
+              airflow webserver -p 8080 -D && \
+              echo "Starting Airflow scheduler..." && \
               exec airflow scheduler
 
           # (Optional) Uncomment if you want to mount DAGs later from ConfigMap
