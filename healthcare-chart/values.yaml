@@ -36,14 +36,16 @@ consumer:
 frontend:
   image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/frontend:latest"
   replicas: 2
-  port: 80                 # 👈 since Nginx serves on port 80
+  port: 80                  # 👈 Nginx serves on port 80
   service:
-    type: LoadBalancer      # 👈 expose this publicly via GCP load balancer
+    type: LoadBalancer      # 👈 expose publicly via GCP load balancer
   ingress:
-    enabled: false          # 👈 disable ingress entirely (we’re using LoadBalancer instead)
+    enabled: false          # 👈 disable ingress since using LoadBalancer
 
-
- airflow:
+# ---------------- AIRFLOW ----------------
+airflow:
   image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/airflow:latest"
+  replicas: 1
+  port: 8080
   service:
-    type: LoadBalancer
+    type: LoadBalancer      # 👈 expose Airflow UI externally
