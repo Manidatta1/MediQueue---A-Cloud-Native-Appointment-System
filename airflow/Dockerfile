@@ -1,12 +1,11 @@
 FROM apache/airflow:2.9.0
 
-USER root
+USER airflow
 RUN pip install --no-cache-dir psycopg2-binary requests
 
 # Copy DAGs
 COPY dags/ /opt/airflow/dags/
 
-USER airflow
 
 # Default command — initialize DB, create user, and start webserver + scheduler
 CMD bash -c "airflow db init && \
