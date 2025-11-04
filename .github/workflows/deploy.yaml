@@ -68,7 +68,7 @@ jobs:
             --create-namespace \
             --set auth.username=healthcare_admin \
             --set auth.password=healthcareadmin123 \
-            --set auth.database=healthcaredatabase \
+            --set auth.database=healthcare \
             --set fullnameOverride=postgres-service
 
           helm upgrade --install rabbitmq bitnami/rabbitmq \
