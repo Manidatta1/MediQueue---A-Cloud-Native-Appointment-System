@@ -27,15 +27,20 @@ spec:
             - /bin/bash
             - -c
             - |
-              echo "Initializing Airflow DB (Postgres)..." && \
+              echo "🔹 Checking if Airflow DB exists..." && \
+              PGPASSWORD=healthcareadmin123 psql -h postgres-service -U healthcare_admin -tc "SELECT 1 FROM pg_database WHERE datname='airflow_db'" | grep -q 1 || \
+                PGPASSWORD=healthcareadmin123 psql -h postgres-service -U healthcare_admin -c "CREATE DATABASE airflow_db;" && \
+              echo "✅ Database ready." && \
+              echo "🔹 Migrating schema..." && \
               airflow db migrate && \
-              echo "Creating admin user (ignore if exists)..." && \
+              echo "🔹 Creating admin user (ignore if exists)..." && \
               airflow users create -u admin -p admin -f Air -l Flow -r Admin -e admin@example.com || true && \
-              echo "Starting Airflow webserver on port 8080..." && \
+              echo "🚀 Starting Airflow webserver on port 8080..." && \
               airflow webserver -p 8080 -D && \
-              echo "Starting Airflow scheduler..." && \
-              exec airflow scheduler
+              echo "🌀 Starting Airflow scheduler with restart loop..." && \
+              while true; do airflow scheduler; sleep 10; done
       restartPolicy: Always
+
 
 
           # (Optional) Uncomment if you want to mount DAGs later from ConfigMap
