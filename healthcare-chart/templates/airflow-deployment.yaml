@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: airflow-service
+  name: airflow
   namespace: {{ .Values.namespace }}
 spec:
   replicas: 1
