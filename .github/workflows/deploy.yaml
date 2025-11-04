@@ -27,6 +27,7 @@ jobs:
           echo "BACKEND=${{ env.GAR_HOST }}/${{ env.PROJECT_ID }}/${{ env.REPO }}/backend:${SHA}" >> $GITHUB_OUTPUT
           echo "AUTH=${{ env.GAR_HOST }}/${{ env.PROJECT_ID }}/${{ env.REPO }}/auth:${SHA}" >> $GITHUB_OUTPUT
           echo "FRONTEND=${{ env.GAR_HOST }}/${{ env.PROJECT_ID }}/${{ env.REPO }}/frontend:${SHA}" >> $GITHUB_OUTPUT
+          echo "AIRFLOW=${{ env.GAR_HOST }}/${{ env.PROJECT_ID }}/${{ env.REPO }}/airflow:${SHA}" >> $GITHUB_OUTPUT
 
       # ---------- Authenticate with Google Cloud ----------
       - name: Authenticate to Google Cloud
