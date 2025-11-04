@@ -36,7 +36,7 @@ consumer:
 frontend:
   image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/frontend:latest"
   replicas: 2
-  port: 5173                  # 👈 since Nginx serves on port 80
+  port: 80                 # 👈 since Nginx serves on port 80
   service:
     type: LoadBalancer      # 👈 expose this publicly via GCP load balancer
   ingress:
