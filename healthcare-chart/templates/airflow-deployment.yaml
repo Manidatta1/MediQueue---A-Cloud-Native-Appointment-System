@@ -19,28 +19,24 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: AIRFLOW__CORE__LOAD_EXAMPLES
-              value: "False"
-            - name: AIRFLOW__CORE__EXECUTOR
-              value: "SequentialExecutor"
-            - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
-              value: "sqlite:////opt/airflow/airflow.db"
-            - name: AIRFLOW__WEBSERVER__DEFAULT_UI_TIMEZONE
-              value: "America/Chicago"
-
-          # ✅ Ensures Airflow stays running and starts all components
+            {{- range .Values.airflow.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
           command:
             - /bin/bash
             - -c
             - |
-              echo "Initializing Airflow DB..." && \
-              airflow db init && \
+              echo "Initializing Airflow DB (Postgres)..." && \
+              airflow db migrate && \
               echo "Creating admin user (ignore if exists)..." && \
               airflow users create -u admin -p admin -f Air -l Flow -r Admin -e admin@example.com || true && \
-              echo "Starting Airflow webserver..." && \
+              echo "Starting Airflow webserver on port 8080..." && \
               airflow webserver -p 8080 -D && \
               echo "Starting Airflow scheduler..." && \
               exec airflow scheduler
+      restartPolicy: Always
+
 
           # (Optional) Uncomment if you want to mount DAGs later from ConfigMap
           # volumeMounts:
