@@ -58,7 +58,6 @@ jobs:
       # ---------- Install Infra Dependencies via Helm ----------
       - name: Install PostgreSQL, RabbitMQ, and Airflow
         run: |
-          kubectl create namespace healthcare --dry-run=client -o yaml | kubectl apply -f -
 
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm repo add apache-airflow https://airflow.apache.org
@@ -66,6 +65,7 @@ jobs:
 
           helm upgrade --install postgres bitnami/postgresql \
             --namespace healthcare \
+            --create-namespace \
             --set auth.username=healthcare_admin \
             --set auth.password=healthcareadmin123 \
             --set auth.database=healthcare \
@@ -112,7 +112,6 @@ jobs:
         run: |
           helm upgrade --install healthcare ./healthcare-chart \
             --namespace healthcare \
-            --create-namespace \
             --set backend.image=${{ steps.tags.outputs.BACKEND }} \
             --set auth.image=${{ steps.tags.outputs.AUTH }} \
             --set frontend.image=${{ steps.tags.outputs.FRONTEND }} \
