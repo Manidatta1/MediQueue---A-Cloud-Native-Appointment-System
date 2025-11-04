@@ -11,35 +11,33 @@ global:
   jwtSecret: xyz
   jwtAlgorithm: HS256
 
+# ---------------- BACKEND ----------------
 backend:
   image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/backend:latest"
   replicas: 2
   port: 8000
   service:
-    type: NodePort
+    type: ClusterIP          # 👈 internal only (no external IP)
 
+# ---------------- AUTH SERVICE ----------------
 auth:
   image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/auth:latest"
   replicas: 2
   port: 8001
   service:
-    type: NodePort
+    type: ClusterIP          # 👈 internal only (no external IP)
 
+# ---------------- CONSUMER WORKER ----------------
 consumer:
   image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/backend:latest"
   replicas: 1
 
+# ---------------- FRONTEND ----------------
 frontend:
   image: "us-central1-docker.pkg.dev/healthcare-platform-477020/healthcare-repo/frontend:latest"
   replicas: 2
-  port: 5173
+  port: 5173                  # 👈 since Nginx serves on port 80
   service:
-    type: NodePort
+    type: LoadBalancer      # 👈 expose this publicly via GCP load balancer
   ingress:
-    enabled: true
-    hostname: healthcare.example.com
-
-airflow:
-  enabled: false
-
-
+    enabled: false          # 👈 disable ingress entirely (we’re using LoadBalancer instead)
