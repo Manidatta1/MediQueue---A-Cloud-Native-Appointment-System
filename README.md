@@ -36,21 +36,6 @@ A microservices-based healthcare platform where:
 - **Google Artifact Registry:** Docker image registry
 - **GitHub Actions:** CI/CD to build, push, and deploy
 
----
-
-## 📂 Repository Structure
-
-```text
-.
-├── .github/workflows/        # GitHub Actions pipeline (deploy.yaml)
-├── airflow/                  # Airflow Dockerfile + DAGs (e.g., reset_doctor_slots.py)
-├── app_service/              # Main FastAPI backend
-├── authentication_service/   # FastAPI auth microservice
-├── frontend/                 # React + Vite + Tailwind SPA
-├── healthcare-chart/         # Helm chart for app deployment
-├── docker-compose.yml        # Local development stack
-└── README.md
-
 
 ## 🧩 Tech Stack Overview
 
