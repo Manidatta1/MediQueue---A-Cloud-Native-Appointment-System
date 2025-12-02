@@ -162,6 +162,8 @@ The GitHub Actions workflow performs the following steps automatically:
 - **`healthcare-chart` Helm chart**  
 - Deployment into your **GKE cluster**
 
+Run the workflow in using Github Actions
+
 ---
 
 ## 🌐 Accessing the Application on GKE
@@ -171,8 +173,6 @@ After deploying the application using Helm, retrieve the external IP of the Load
 kubectl get svc -n healthcare
 
 ## 🔎 Look for the Service Exposed as LoadBalancer
-
-Typically, this will be your **frontend gateway** or **nginx** service.
 
 When you run:
 
