@@ -10,14 +10,14 @@ A microservices-based healthcare platform where:
 
 ---
 
-## 👥 Team
+## Team
 
 - **Manidatta Anumandla**  
 - **Pramod Kumar Ajmera**
 
 ---
 
-## 🧩 Architecture Overview
+## Architecture Overview
 
 ![System Architecture](https://github.com/Manidatta1/MediQueue---A-Cloud-Native-Appointment-System/blob/main/Architecture.png)
 
@@ -40,56 +40,56 @@ A microservices-based healthcare platform where:
 - **GitHub Actions:** CI/CD to build, push, and deploy
 
 
-## 🧩 Tech Stack Overview
+## Tech Stack Overview
 
-### 🎨 Frontend  
+### Frontend  
 - **React**  
 - **Vite**  
 - **Tailwind CSS**
 
-### 🧠 Backend / Authentication  
+### Backend / Authentication  
 - **FastAPI (Python)**
 
-### 📬 Async Processing / Messaging  
+### Async Processing / Messaging  
 - **RabbitMQ**
 
-### ⚡ Cache / Distributed Locking  
+### Cache / Distributed Locking  
 - **Redis**
 
-### 🗄️ Database  
+### Database  
 - **PostgreSQL**
 
-### ⏱️ Workflow Orchestration / Scheduler  
+### Workflow Orchestration / Scheduler  
 - **Apache Airflow**
 
-### ☸️ Container Orchestration  
+### Container Orchestration  
 - **Kubernetes (GKE)**
 
-### 📦 Containerization  
+### Containerization  
 - **Docker**
 
-### 🚀 CI/CD Pipeline  
+### CI/CD Pipeline  
 - **GitHub Actions**  
 - **Google Artifact Registry**
 
-### ☁️ Cloud Platform  
+### Cloud Platform  
 - **Google Cloud Platform (GCP)**
 
 
-## 🚀 GCP Setup 
+## GCP Setup 
 
 Run these commands **once** in your GCP project before using the GitHub Actions workflow.
 
 ---
 
-### ✅ 1. Enable Required APIs
+### 1. Enable Required APIs
 
 gcloud services enable \
   container.googleapis.com \
   artifactregistry.googleapis.com \
   compute.googleapis.com
 
-### ☸️ 2. Create a GKE Cluster
+### 2. Create a GKE Cluster
 
 gcloud container clusters create healthcare-cluster \
   --zone=us-central1-a \
@@ -98,21 +98,21 @@ gcloud container clusters create healthcare-cluster \
   --enable-autoupgrade \
   --enable-autorepair
 
-### 🗄️ 3. Create an Artifact Registry Repository
+### 3. Create an Artifact Registry Repository
 
 gcloud artifacts repositories create healthcare-repo \
   --repository-format=docker \
   --location=us-central1 \
   --description="Healthcare system Docker images"
 
-## 📌 Notes
+## Notes
 
 - Use the **same GCP project** for both the **GKE cluster** and the **Artifact Registry repository**.  
 - `healthcare-repo` is the Docker repository referenced in the **GitHub Actions** workflow.
 
 ---
 
-## 🔑 GitHub Secrets Required
+## GitHub Secrets Required
 
 Add these secrets in your GitHub repository:
 
@@ -124,7 +124,7 @@ Add these secrets in your GitHub repository:
 
 ---
 
-## 🛡️ Required IAM Roles for the Service Account
+## Required IAM Roles for the Service Account
 
 Assign the following roles:
 
@@ -140,25 +140,25 @@ These roles provide:
 
 ---
 
-## 🚀 CI/CD: Build & Deploy to GKE (GitHub Actions)
+## CI/CD: Build & Deploy to GKE (GitHub Actions)
 
 The GitHub Actions workflow performs the following steps automatically:
 
-### 🏗️ Builds Docker images for:
+### Builds Docker images for:
 - Backend  
 - Auth service  
 - Frontend  
 - Airflow  
 
-### 📤 Pushes images to:
+### Pushes images to:
 - **Google Artifact Registry**
 
-### 📦 Installs core services via Helm:
+### Installs core services via Helm:
 - PostgreSQL  
 - RabbitMQ  
 - Redis  
 
-### ☸️ Deploys the application using:
+### Deploys the application using:
 - **`healthcare-chart` Helm chart**  
 - Deployment into your **GKE cluster**
 
@@ -166,13 +166,13 @@ Run the workflow in using Github Actions
 
 ---
 
-## 🌐 Accessing the Application on GKE
+## Accessing the Application on GKE
 
 After deploying the application using Helm, retrieve the external IP of the LoadBalancer service:
 
 kubectl get svc -n healthcare
 
-## 🔎 Look for the Service Exposed as LoadBalancer
+## Look for the Service Exposed as LoadBalancer
 
 When you run:
 
@@ -184,7 +184,7 @@ EXTERNAL-IP 34.xx.xx.xx
 
 ---
 
-## 🌍 Application URLs
+## Application URLs
 
 ### Main Application
 
